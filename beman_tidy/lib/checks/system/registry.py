@@ -40,7 +40,9 @@ def get_all_beman_standard_check_names() -> list[str]:
     return list(_beman_standard_check_registry.keys())
 
 
-def get_beman_standard_check_name_by_class(target_check_class: type | None) -> str | None:
+def get_beman_standard_check_name_by_class(
+    target_check_class: type | None,
+) -> str | None:
     """Get the name of a check class"""
     for check_name, check_class in _beman_standard_check_registry.items():
         if check_class == target_check_class:

@@ -132,7 +132,9 @@ def run_checks_pipeline(checks_to_run, args, beman_standard_check_config):
         }
 
         # Resolve disabled from config.
-        disabled_rules = get_disabled_rules(args.repo_info, beman_standard_check_config.keys())
+        disabled_rules = get_disabled_rules(
+            args.repo_info, beman_standard_check_config.keys()
+        )
 
         # Run the checks.
         for check_name in checks_to_run:
@@ -146,7 +148,9 @@ def run_checks_pipeline(checks_to_run, args, beman_standard_check_config):
                     if not args.require_all
                     else "Requirement"
                 )
-                log(f"Running check [{check_type}][{check_name}] ... {gray_color}disabled (by own repo config){no_color}\n")
+                log(
+                    f"Running check [{check_type}][{check_name}] ... {gray_color}disabled (by own repo config){no_color}\n"
+                )
                 cnt_disabled_checks[check_type] += 1
                 continue
 
@@ -235,13 +239,19 @@ def run_checks_pipeline(checks_to_run, args, beman_standard_check_config):
         else cnt_implemented_checks["Requirement"]
     )
     # Exclude disabled checks from the total implemented count for coverage.
-    disabled_req_total = cnt_disabled_checks["Requirement"] + (cnt_disabled_checks["Recommendation"] if args.require_all else 0)
+    disabled_req_total = cnt_disabled_checks["Requirement"] + (
+        cnt_disabled_checks["Recommendation"] if args.require_all else 0
+    )
     total_implemented_requirement -= disabled_req_total
 
-    coverage_requirement = round(
-        cnt_passed_requirement / total_implemented_requirement * 100,
-        2,
-    ) if total_implemented_requirement > 0 else 0
+    coverage_requirement = (
+        round(
+            cnt_passed_requirement / total_implemented_requirement * 100,
+            2,
+        )
+        if total_implemented_requirement > 0
+        else 0
+    )
 
     cnt_passed_recommendation = (
         cnt_passed_checks["Recommendation"] + cnt_skipped_checks["Recommendation"]
@@ -252,7 +262,9 @@ def run_checks_pipeline(checks_to_run, args, beman_standard_check_config):
         cnt_implemented_checks["Recommendation"] if not args.require_all else 0
     )
     # Exclude disabled checks from the total implemented count for coverage.
-    disabled_rec_total = 0 if args.require_all else cnt_disabled_checks["Recommendation"]
+    disabled_rec_total = (
+        0 if args.require_all else cnt_disabled_checks["Recommendation"]
+    )
     total_implemented_recommendation -= disabled_rec_total
 
     coverage_recommendation = (
@@ -270,8 +282,12 @@ def run_checks_pipeline(checks_to_run, args, beman_standard_check_config):
         + cnt_skipped_checks["Recommendation"]
     )
     total_implemented = total_implemented_requirement + total_implemented_recommendation
-    total_coverage = round((total_passed) / (total_implemented) * 100, 2) if total_implemented > 0 else 0
-    
+    total_coverage = (
+        round((total_passed) / (total_implemented) * 100, 2)
+        if total_implemented > 0
+        else 0
+    )
+
     disabled_req_coverage_suffix = (
         f" {yellow_color}({disabled_req_total} disabled){calculate_coverage_color(coverage_requirement)}"
         if disabled_req_total > 0
@@ -290,7 +306,9 @@ def run_checks_pipeline(checks_to_run, args, beman_standard_check_config):
         f"{calculate_coverage_color(coverage_recommendation, no_color=args.require_all)}Coverage Recommendation: {coverage_recommendation:{6}.2f}% "
         f"({cnt_passed_recommendation}/{total_implemented_recommendation} checks passed){disabled_rec_coverage_suffix}.{no_color}"
     )
-    total_disabled = cnt_disabled_checks["Requirement"] + cnt_disabled_checks["Recommendation"]
+    total_disabled = (
+        cnt_disabled_checks["Requirement"] + cnt_disabled_checks["Recommendation"]
+    )
     disabled_total_coverage_suffix = (
         f" {yellow_color}({total_disabled} disabled){calculate_coverage_color(total_coverage)}"
         if total_disabled > 0

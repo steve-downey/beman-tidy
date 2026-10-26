@@ -15,6 +15,7 @@ setup_logging()
 # .gitignore is honored unless the repository configuration opts out.
 DEFAULT_USE_GITIGNORE = True
 
+
 def validate_config(config):
     """
     Validate the repository configuration.
@@ -26,27 +27,33 @@ def validate_config(config):
         ignored_paths = []
 
     if not isinstance(ignored_paths, list):
-        logging.error(f"Error: 'ignored_paths' in .beman-tidy.yaml must be a list, but got {type(ignored_paths).__name__}.")
+        logging.error(
+            f"Error: 'ignored_paths' in .beman-tidy.yaml must be a list, but got {type(ignored_paths).__name__}."
+        )
         return False
 
     mandatory_files = {"README.md", "LICENSE"}
 
     for path in ignored_paths:
         if not isinstance(path, str):
-            logging.error(f"Error: Invalid entry in 'ignored_paths': {path}. Must be a string.")
+            logging.error(
+                f"Error: Invalid entry in 'ignored_paths': {path}. Must be a string."
+            )
             return False
 
         clean_path = path.rstrip("/")
         # Check for exact match
         if clean_path in mandatory_files:
-            logging.error(f"Error: Cannot ignore mandatory file '{clean_path}' in .beman-tidy.yaml")
+            logging.error(
+                f"Error: Cannot ignore mandatory file '{clean_path}' in .beman-tidy.yaml"
+            )
             return False
-        
+
         # Check if ignoring root directory
         if clean_path == "." or clean_path == "":
             logging.error("Error: Cannot ignore root directory in .beman-tidy.yaml")
             return False
-             
+
     if not _validate_disabled_rules(config):
         return False
 
@@ -66,7 +73,9 @@ def _validate_use_gitignore(config):
         return True
 
     if not isinstance(use_gitignore, bool):
-        logging.error(f"Error: 'use_gitignore' in .beman-tidy.yaml must be a boolean, but got {type(use_gitignore).__name__}.")
+        logging.error(
+            f"Error: 'use_gitignore' in .beman-tidy.yaml must be a boolean, but got {type(use_gitignore).__name__}."
+        )
         return False
 
     return True
@@ -85,12 +94,16 @@ def _validate_disabled_rules(config):
         return True
 
     if not isinstance(disabled_rules, list):
-        logging.error(f"Error: 'disabled_rules' in .beman-tidy.yaml must be a list, but got {type(disabled_rules).__name__}.")
+        logging.error(
+            f"Error: 'disabled_rules' in .beman-tidy.yaml must be a list, but got {type(disabled_rules).__name__}."
+        )
         return False
 
     for entry in disabled_rules:
         if not isinstance(entry, str):
-            logging.error(f"Error: Invalid entry in 'disabled_rules': {entry}. Must be a string.")
+            logging.error(
+                f"Error: Invalid entry in 'disabled_rules': {entry}. Must be a string."
+            )
             return False
 
     return True
@@ -115,9 +128,13 @@ def get_disabled_rules(repo_info, known_rule_names):
     for pattern in raw_patterns:
         if "*" in pattern:
             # Expand glob pattern
-            matched = {name for name in known_rule_names if fnmatch.fnmatchcase(name, pattern)}
+            matched = {
+                name for name in known_rule_names if fnmatch.fnmatchcase(name, pattern)
+            }
             if not matched:
-                logging.warning(f"Warning: disabled_rules pattern '{pattern}' does not match any known rule. Skipping.")
+                logging.warning(
+                    f"Warning: disabled_rules pattern '{pattern}' does not match any known rule. Skipping."
+                )
             else:
                 all_matched.update(matched)
         else:
@@ -125,7 +142,9 @@ def get_disabled_rules(repo_info, known_rule_names):
             if pattern in known_rule_names:
                 all_matched.add(pattern)
             else:
-                logging.warning(f"Warning: disabled_rules pattern '{pattern}' does not match any known rule. Skipping.")
+                logging.warning(
+                    f"Warning: disabled_rules pattern '{pattern}' does not match any known rule. Skipping."
+                )
 
     return all_matched
 
@@ -150,7 +169,7 @@ def load_repo_config(repo_path, config_path=None):
     """
     # Load default configuration
     default_config_path = get_default_config_path()
-    with default_config_path.open('r') as f:
+    with default_config_path.open("r") as f:
         default_config = yaml.safe_load(f) or {}
 
     # Determine user config path
@@ -166,10 +185,14 @@ def load_repo_config(repo_path, config_path=None):
             with open(user_config_path, "r") as f:
                 user_config = yaml.safe_load(f) or {}
         except Exception as e:
-            logging.error(f"Error loading user configuration from '{user_config_path}': {e}")
+            logging.error(
+                f"Error loading user configuration from '{user_config_path}': {e}"
+            )
             sys.exit(1)
     elif config_path:
-        logging.error(f"Error: Configuration file specified not found at '{config_path}'")
+        logging.error(
+            f"Error: Configuration file specified not found at '{config_path}'"
+        )
         sys.exit(1)
 
     # Merge configurations

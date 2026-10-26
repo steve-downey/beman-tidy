@@ -15,6 +15,7 @@ from beman_tidy.lib.utils.cmake import (
 from ..system.registry import register_beman_standard_check
 from ..base.file_base_check import FileBaseCheck
 
+
 # [cmake.*] checks category.
 # All checks in this file extend the CMakeBaseCheck class.
 #
@@ -46,6 +47,7 @@ class CMakeBaseCheck(FileBaseCheck, ABC):
         repo_info: Contains information about the repository being checked.
         beman_standard_check_config: Configuration settings for the Beman standard checks.
     """
+
     def __init__(self, repo_info, beman_standard_check_config):
         super().__init__(repo_info, beman_standard_check_config, "CMakeLists.txt")
 
@@ -164,7 +166,9 @@ class CMakeDefaultCheck(CMakeBaseCheck):
             if isinstance(item, If) and item.args:
                 condition = item.args[0].value
                 for sub in item.if_true or []:
-                    if isinstance(sub, Command) and self._is_library_add_library_command(sub):
+                    if isinstance(
+                        sub, Command
+                    ) and self._is_library_add_library_command(sub):
                         conditions.append(condition)
         return conditions
 
@@ -178,10 +182,12 @@ class CMakeDefaultCheck(CMakeBaseCheck):
         )
 
         if not has_library_in_raw:
-            self.log("CMake library target is not built by default. "
-                     f"Expected unconditional add_library('{self.library_name}') in the root CMakeLists.txt. "
-                     "Please update the CMakeLists.txt file according to the Beman Standard. "
-                     "See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakedefault for more information.")
+            self.log(
+                "CMake library target is not built by default. "
+                f"Expected unconditional add_library('{self.library_name}') in the root CMakeLists.txt. "
+                "Please update the CMakeLists.txt file according to the Beman Standard. "
+                "See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakedefault for more information."
+            )
             return False
 
         if self._has_unconditional_library_target(ast_tree):
@@ -191,17 +197,24 @@ class CMakeDefaultCheck(CMakeBaseCheck):
         if_conditions = self._library_if_conditions(ast_tree)
 
         for condition in if_conditions:
-            if condition in option_defaults and (option_defaults[condition] or "").upper() == "OFF":
-                self.log("CMake library target is guarded by an option defaulting to OFF. "
-                         f"The library target '{self.library_name}' must be built unconditionally. "
-                         "Please update the CMakeLists.txt file according to the Beman Standard. "
-                         "See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakedefault for more information.")
+            if (
+                condition in option_defaults
+                and (option_defaults[condition] or "").upper() == "OFF"
+            ):
+                self.log(
+                    "CMake library target is guarded by an option defaulting to OFF. "
+                    f"The library target '{self.library_name}' must be built unconditionally. "
+                    "Please update the CMakeLists.txt file according to the Beman Standard. "
+                    "See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakedefault for more information."
+                )
                 return False
 
-        self.log("CMake library target is only built conditionally. "
-                 f"Expected unconditional add_library('{self.library_name}') in the root CMakeLists.txt. "
-                 "Please update the CMakeLists.txt file according to the Beman Standard. "
-                 "See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakedefault for more information.")
+        self.log(
+            "CMake library target is only built conditionally. "
+            f"Expected unconditional add_library('{self.library_name}') in the root CMakeLists.txt. "
+            "Please update the CMakeLists.txt file according to the Beman Standard. "
+            "See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakedefault for more information."
+        )
         return False
 
     def fix(self):
@@ -225,16 +238,20 @@ class CMakeProjectNameCheck(CMakeBaseCheck):
         cmake_project_name = self.get_cmake_project_name(ast)
 
         if cmake_project_name is None:
-            self.log("CMake project name not found. "
-                     f"Expected project name: '{self.library_name}'. "
-                     "Please update the CMakeLists.txt file according to the Beman Standard. "
-                     "See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakeproject_name for more information.")
+            self.log(
+                "CMake project name not found. "
+                f"Expected project name: '{self.library_name}'. "
+                "Please update the CMakeLists.txt file according to the Beman Standard. "
+                "See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakeproject_name for more information."
+            )
             return False
 
         if cmake_project_name != self.library_name:
-            self.log(f"Invalid CMake project name - got: '{cmake_project_name}', expected: '{self.library_name}'. "
-                     "Please update the CMakeLists.txt file according to the Beman Standard. "
-                     "See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakeproject_name for more information.")
+            self.log(
+                f"Invalid CMake project name - got: '{cmake_project_name}', expected: '{self.library_name}'. "
+                "Please update the CMakeLists.txt file according to the Beman Standard. "
+                "See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakeproject_name for more information."
+            )
             return False
 
         return True
@@ -260,16 +277,20 @@ class CMakeLibraryNameCheck(CMakeBaseCheck):
         cmake_library_name = self.get_cmake_library_name(ast)
 
         if cmake_library_name is None:
-            self.log("CMake library target name not found. "
-                     f"Expected library target name: '{self.library_name}'. "
-                     "Please update the CMakeLists.txt file according to the Beman Standard. "
-                     "See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakelibrary_name for more information.")
+            self.log(
+                "CMake library target name not found. "
+                f"Expected library target name: '{self.library_name}'. "
+                "Please update the CMakeLists.txt file according to the Beman Standard. "
+                "See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakelibrary_name for more information."
+            )
             return False
 
         if cmake_library_name != self.library_name:
-            self.log(f"Invalid CMake library target name - got: '{cmake_library_name}', expected: '{self.library_name}'. "
-                     "Please update the CMakeLists.txt file according to the Beman Standard. "
-                     "See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakelibrary_name for more information.")
+            self.log(
+                f"Invalid CMake library target name - got: '{cmake_library_name}', expected: '{self.library_name}'. "
+                "Please update the CMakeLists.txt file according to the Beman Standard. "
+                "See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakelibrary_name for more information."
+            )
             return False
 
         return True
@@ -314,10 +335,12 @@ class CMakeLibraryAliasCheck(CMakeBaseCheck):
                 if args[0] == expected_library_alias:
                     return True
 
-        self.log("Missing or invalid CMake library alias target. "
-                 f"Expected alias target: '{expected_library_alias}'. "
-                 "Please update the CMakeLists.txt file according to the Beman Standard. "
-                 "See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakelibrary_alias for more information.")
+        self.log(
+            "Missing or invalid CMake library alias target. "
+            f"Expected alias target: '{expected_library_alias}'. "
+            "Please update the CMakeLists.txt file according to the Beman Standard. "
+            "See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakelibrary_alias for more information."
+        )
         return False
 
     def fix(self):
@@ -349,7 +372,9 @@ class CMakeTargetNamesCheck(CMakeBaseCheck):
             # all other targets must begin with '<library_name>.'
             if not target_name.startswith(f"{self.library_name}."):
                 wrong_prefix = True
-                self.log(f"Invalid CMake target name - got: '{target_name}', expected prefix: '{self.library_name}.'")
+                self.log(
+                    f"Invalid CMake target name - got: '{target_name}', expected prefix: '{self.library_name}.'"
+                )
 
         if wrong_prefix:
             self.log(

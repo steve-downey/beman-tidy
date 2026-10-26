@@ -129,8 +129,7 @@ def compare_standard_to_yaml(
     yaml_ids = set(yaml_rules)
 
     added = {
-        rule_id: markdown_rules[rule_id]
-        for rule_id in sorted(markdown_ids - yaml_ids)
+        rule_id: markdown_rules[rule_id] for rule_id in sorted(markdown_ids - yaml_ids)
     }
     removed = sorted(yaml_ids - markdown_ids)
     type_changed = {

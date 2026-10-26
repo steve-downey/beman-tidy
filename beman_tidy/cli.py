@@ -18,7 +18,9 @@ def list_checks(beman_standard_check_config):
     implemented_checks = get_registered_beman_standard_checks()
 
     for check_name in sorted(implemented_checks):
-        check_type = beman_standard_check_config.get(check_name, {}).get("type", "Unknown")
+        check_type = beman_standard_check_config.get(check_name, {}).get(
+            "type", "Unknown"
+        )
         print(f"[{check_type}]".ljust(16), check_name)
 
 
@@ -26,6 +28,7 @@ class ListChecksAction(argparse.Action):
     """
     Argparse action that lists implemented checks and exits.
     """
+
     def __init__(self, option_strings, dest, **kwargs):
         super().__init__(
             option_strings=option_strings,
@@ -37,7 +40,9 @@ class ListChecksAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         beman_standard_check_config = load_beman_standard_config()
         if not beman_standard_check_config or len(beman_standard_check_config) == 0:
-            parser.exit(status=1, message="Failed to load the Beman Standard configuration.\n")
+            parser.exit(
+                status=1, message="Failed to load the Beman Standard configuration.\n"
+            )
 
         list_checks(beman_standard_check_config)
         parser.exit()
@@ -57,7 +62,7 @@ def parse_args():
     parser.add_argument(
         "repo_path",
         help="path to the repository to check; required unless --list-checks is used",
-        type=str
+        type=str,
     )
     parser.add_argument(
         "--fix-inplace",

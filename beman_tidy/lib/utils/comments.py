@@ -2,14 +2,17 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 from enum import Enum, auto
 
+
 class CommentType(Enum):
     LINE = auto()
     BLOCK = auto()
 
+
 # Supports multiple comment styles
-LINE_PREFIXES = ['//']
-BLOCK_STARTS = ['/*']
-BLOCK_ENDS = ['*/']
+LINE_PREFIXES = ["//"]
+BLOCK_STARTS = ["/*"]
+BLOCK_ENDS = ["*/"]
+
 
 def determine_comment_type(lines, line_index):
     """
@@ -18,17 +21,17 @@ def determine_comment_type(lines, line_index):
     """
     if line_index < 0 or line_index >= len(lines):
         return None
-        
+
     line = lines[line_index].strip()
-    
+
     # Check for line comments
     if any(line.startswith(prefix) for prefix in LINE_PREFIXES):
         return CommentType.LINE
-        
+
     # Check for block comment start
     if any(line.startswith(start) for start in BLOCK_STARTS):
         return CommentType.BLOCK
-        
+
     # Check if inside block comment
     for i in range(line_index - 1, -1, -1):
         prev_line = lines[i].strip()
@@ -43,7 +46,7 @@ def determine_comment_type(lines, line_index):
         elif has_start:
             # We are inside the block
             return CommentType.BLOCK
-             
+
     return None
 
 
@@ -65,10 +68,10 @@ def iterate_comment_lines(lines, start_index, comment_type):
                 yield i, line
                 i += 1
                 continue
-            
+
             if not any(stripped.startswith(prefix) for prefix in LINE_PREFIXES):
                 break
-            
+
             yield i, line
             i += 1
 

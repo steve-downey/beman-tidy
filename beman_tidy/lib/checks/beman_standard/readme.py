@@ -202,10 +202,9 @@ class ReadmeLicenseCheck(ReadmeBaseCheck):
 
         # Check if the license section contains at least one of the required licenses.
         license_text = license_section.group(1).strip()
-        if (
-            not match_apache_license_v2_with_llvm_exceptions(license_text)
-            and not match_boost_software_license_v1_0(license_text)
-        ):
+        if not match_apache_license_v2_with_llvm_exceptions(
+            license_text
+        ) and not match_boost_software_license_v1_0(license_text):
             display_path = normalize_path_for_display(self.path, self.repo_path)
             self.log(
                 f"The file '{display_path}' does not contain the required license. "

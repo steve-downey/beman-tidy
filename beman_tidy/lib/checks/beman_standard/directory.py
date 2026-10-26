@@ -40,21 +40,42 @@ class BemanTreeDirectoryCheck(DirectoryBaseCheck, ABC):
             f"{prefix_path}/beman/{short_name}",
         )
 
+
 def _get_tolerated_root_files():
     """
     Returns a set of filenames that are allowed to exist in the root directory.
     """
     return {"README.md", "CONTRIBUTING.md"}
 
+
 def _get_paper_extensions():
     """
     Returns a list of file extensions that are "paper-related".
     """
     return [
-        ".md", ".bib", ".bst", ".tex", ".sty", ".cls", ".pdf", ".docx",
-        ".org", ".html", ".css", ".js", ".asciidoc", ".asc", ".ad",
-        ".ascdoc", ".rst", ".wip", ".draft", ".proposal", ".standard",
+        ".md",
+        ".bib",
+        ".bst",
+        ".tex",
+        ".sty",
+        ".cls",
+        ".pdf",
+        ".docx",
+        ".org",
+        ".html",
+        ".css",
+        ".js",
+        ".asciidoc",
+        ".asc",
+        ".ad",
+        ".ascdoc",
+        ".rst",
+        ".wip",
+        ".draft",
+        ".proposal",
+        ".standard",
     ]
+
 
 # TODO directory.interface_headers
 
@@ -86,7 +107,9 @@ class DirectorySourcesCheck(BemanTreeDirectoryCheck):
         for forbidden_prefix in forbidden_source_locations:
             forbidden_prefix = self.repo_path / forbidden_prefix
             if forbidden_prefix.exists():
-                display_path = normalize_path_for_display(forbidden_prefix, self.repo_path)
+                display_path = normalize_path_for_display(
+                    forbidden_prefix, self.repo_path
+                )
                 self.log(
                     f"Please move source files from {display_path} to src/beman/{self.short_name}. See https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#directorysources for more information."
                 )
@@ -159,7 +182,9 @@ class DirectoryTestsCheck(BemanTreeDirectoryCheck):
         # Check if any test files are misplaced outside the excluded directories.
         if len(misplaced_test_files) > 0:
             for misplaced_test_file in misplaced_test_files:
-                display_path = normalize_path_for_display(misplaced_test_file, self.repo_path)
+                display_path = normalize_path_for_display(
+                    misplaced_test_file, self.repo_path
+                )
                 self.log(f"Misplaced test file found: {display_path}")
 
             self.log(
@@ -257,7 +282,10 @@ class DirectoryDocsCheck(DirectoryBaseCheck):
         misplaced_md_files = [
             p
             for p in self.repo_path.rglob("*.md")
-            if not any(excluded in p.relative_to(self.repo_path).as_posix().split('/') for excluded in exclude_dirs)
+            if not any(
+                excluded in p.relative_to(self.repo_path).as_posix().split("/")
+                for excluded in exclude_dirs
+            )
             and p.name not in tolerated_files
             and not is_ignored(self.repo_info, p.relative_to(self.repo_path))
         ]
@@ -265,7 +293,9 @@ class DirectoryDocsCheck(DirectoryBaseCheck):
         # Check if any MD files are misplaced.
         if len(misplaced_md_files) > 0:
             for misplaced_md_file in misplaced_md_files:
-                display_path = normalize_path_for_display(misplaced_md_file, self.repo_path)
+                display_path = normalize_path_for_display(
+                    misplaced_md_file, self.repo_path
+                )
                 self.log(f"Misplaced MD file found: {display_path}")
 
             self.log(
@@ -286,6 +316,7 @@ class DirectoryDocsCheck(DirectoryBaseCheck):
         )
 
         return True
+
 
 @register_beman_standard_check("directory.papers")
 class DirectoryPapersCheck(DirectoryBaseCheck):
@@ -327,7 +358,10 @@ class DirectoryPapersCheck(DirectoryBaseCheck):
             for p in self.repo_path.rglob(f"*{extension}"):
                 # Exclude files that are already in excluded directories.
                 if (
-                    not any(excluded in p.relative_to(self.repo_path).as_posix() for excluded in exclude_dirs)
+                    not any(
+                        excluded in p.relative_to(self.repo_path).as_posix()
+                        for excluded in exclude_dirs
+                    )
                     and p.name not in tolerated_files
                     and not is_ignored(self.repo_info, p.relative_to(self.repo_path))
                 ):
@@ -335,7 +369,9 @@ class DirectoryPapersCheck(DirectoryBaseCheck):
 
         if len(misplaced_paper_files) > 0:
             for misplaced_paper_file in misplaced_paper_files:
-                display_path = normalize_path_for_display(misplaced_paper_file, self.repo_path)
+                display_path = normalize_path_for_display(
+                    misplaced_paper_file, self.repo_path
+                )
                 self.log(f"Misplaced paper file found: {display_path}")
 
             self.log(

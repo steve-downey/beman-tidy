@@ -31,9 +31,9 @@ def parse_repo_name_from_remote_url(remote_url: str) -> str | None:
         return None
 
     # Pattern for HTTPS URLs: https://github.com/owner/repo.git or https://github.com/owner/repo
-    https_pattern = r'https?://[^/]+/(?:[^/]+/)?([^/]+?)(?:\.git)?/?$'
+    https_pattern = r"https?://[^/]+/(?:[^/]+/)?([^/]+?)(?:\.git)?/?$"
     # Pattern for SSH URLs: git@host:owner/repo.git or git@host:owner/repo
-    ssh_pattern = r'git@[^:]+:(?:[^/]+/)?([^/]+?)(?:\.git)?/?$'
+    ssh_pattern = r"git@[^:]+:(?:[^/]+/)?([^/]+?)(?:\.git)?/?$"
 
     # Try HTTPS pattern first
     match = re.search(https_pattern, remote_url)
@@ -124,7 +124,9 @@ def get_repo_info(path: str, config_path: str | None = None):
         logging.error(f"The path '{path}' is not inside a valid Git repository.")
         sys.exit(1)
     except Exception:
-        logging.error(f"An error occurred while getting repository information. Check {path}.")
+        logging.error(
+            f"An error occurred while getting repository information. Check {path}."
+        )
         sys.exit(1)
 
 

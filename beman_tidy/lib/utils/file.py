@@ -114,24 +114,31 @@ def get_beman_include_headers(repo_path, ignores=None):
     """
     Get all header files in the repository under an include/beman directory.
     """
-    all_headers = get_matched_paths(repo_path, get_cpp_header_extensions(), ignores=ignores)
-    
+    all_headers = get_matched_paths(
+        repo_path, get_cpp_header_extensions(), ignores=ignores
+    )
+
     beman_headers = []
     for path in all_headers:
         try:
             parts = path.parts
-            include_index = parts.index('include')
-            if include_index + 1 < len(parts) and parts[include_index + 1] == 'beman':
+            include_index = parts.index("include")
+            if include_index + 1 < len(parts) and parts[include_index + 1] == "beman":
                 beman_headers.append(path)
         except ValueError:
             continue
-            
+
     return beman_headers
 
 
 COMMENTABLE_EXTENSIONS = {
     # C++
-    ".cpp", ".hpp", ".h", ".hxx", ".cxx", ".cc",
+    ".cpp",
+    ".hpp",
+    ".h",
+    ".hxx",
+    ".cxx",
+    ".cc",
     # CMake
     ".cmake",
     # Python
@@ -139,7 +146,8 @@ COMMENTABLE_EXTENSIONS = {
     # Shell
     ".sh",
     # YAML/YML
-    ".yml", ".yaml",
+    ".yml",
+    ".yaml",
 }
 
 COMMENTABLE_FILENAMES = {
@@ -168,7 +176,10 @@ def get_commentable_files(repo_path, ignores=None):
 
         for f in files:
             f_path = rel_root / f
-            if f_path.suffix in COMMENTABLE_EXTENSIONS or f_path.name in COMMENTABLE_FILENAMES:
+            if (
+                f_path.suffix in COMMENTABLE_EXTENSIONS
+                or f_path.name in COMMENTABLE_FILENAMES
+            ):
                 if not matcher.is_ignored(f_path, is_dir=False):
                     matched_files.append(f_path)
 
@@ -183,8 +194,7 @@ def get_spdx_info(lines):
     If not found or invalid, returns (-1, None).
     """
     spdx_index = next(
-        (i for i, line in enumerate(lines) if "SPDX-License-Identifier:" in line),
-        -1
+        (i for i, line in enumerate(lines) if "SPDX-License-Identifier:" in line), -1
     )
 
     if spdx_index == -1:

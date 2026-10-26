@@ -9,7 +9,7 @@ from ..system.registry import register_beman_standard_check
 from beman_tidy.lib.utils.git import get_beman_recommended_license_path
 from beman_tidy.lib.utils.string import (
     match_apache_license_v2_with_llvm_exceptions,
-    match_boost_software_license_v1_0
+    match_boost_software_license_v1_0,
 )
 
 # [license.*] checks category.
@@ -66,7 +66,11 @@ class LicenseApacheLLVMCheck(LicenseBaseCheck):
     def check(self):
         # Compare LICENSE file stored at self.path with the reference one.
         target_content = self.read().splitlines()
-        ref_content = get_beman_recommended_license_path().read_text(encoding="utf-8").splitlines()
+        ref_content = (
+            get_beman_recommended_license_path()
+            .read_text(encoding="utf-8")
+            .splitlines()
+        )
 
         if target_content != ref_content:
             self.log(

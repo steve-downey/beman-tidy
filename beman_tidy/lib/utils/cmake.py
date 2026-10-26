@@ -13,7 +13,9 @@ def cmake_is_subdirectory(command, subdir_name):
     return arg == subdir_name or arg.startswith(f"{subdir_name}/")
 
 
-def cmake_has_unguarded_subdirectory(nodes, subdir_name, option_name, inside_guard=False):
+def cmake_has_unguarded_subdirectory(
+    nodes, subdir_name, option_name, inside_guard=False
+):
     for item in nodes:
         if isinstance(item, Command):
             if cmake_is_subdirectory(item, subdir_name) and not inside_guard:
